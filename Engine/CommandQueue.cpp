@@ -68,6 +68,12 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 	//컨스턴트 버퍼도 여기서 사용
 	GEngine->GetCB()->Clear();
 
+	//descheap 여기서 사용
+	GEngine->GetTableDescHeap()->Clear();
+	ID3D12DescriptorHeap* descHeap = GEngine->GetTableDescHeap()->GetDescriptorHeap().Get();
+	_cmdList->SetDescriptorHeaps(1, &descHeap);
+
+
 	_cmdList->ResourceBarrier(1, &barrier);
 
 	_cmdList->RSSetViewports(1, vp);

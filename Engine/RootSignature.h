@@ -3,7 +3,7 @@
 //[계약서 / 결재]
 
 //
-//루트 시그니쳐를 사용하도록 CommandQueue 의 RenderBegin 에서 해준다.
+//루트 시그니쳐를 사용하도록 CommandQueue 의 RenderBegin 에서 해준다. 
 class RootSignature
 {
 public:
