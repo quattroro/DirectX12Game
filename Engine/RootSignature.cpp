@@ -1,12 +1,21 @@
 #include "pch.h"
 #include "RootSignature.h"
+#include "Engine.h"
 
 //여기선 일단 초기화를 해주고 실제로 사용은 Mesh의 Render에서 해준다.
-void RootSignature::Init(ComPtr<ID3D12Device> device)
+void RootSignature::Init()
+{
+	CreateSamplerDesc();
+	CreateRootSignature();
+}
+
+
+void RootSignature::CreateRootSignature()
 {
 	CD3DX12_DESCRIPTOR_RANGE ranges[] =
 	{
-		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_CBV/*용도*/,CBV_REGISTER_COUNT/*몇개*/, 0/*몇번째부터 사용할 것인가*/),
+		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_CBV/*용도*/,CBV_REGISTER_COUNT/*몇개*/, 0/*몇번째부터 사용할 것인가*/),//b0~b4
+		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV/*용도*/,SRV_REGISTER_COUNT/*몇개*/, 0/*몇번째부터 사용할 것인가*/),//t0~t4
 	};
 
 	CD3DX12_ROOT_PARAMETER param[1];
@@ -24,5 +33,11 @@ void RootSignature::Init(ComPtr<ID3D12Device> device)
 	ComPtr<ID3DBlob> blobSignature;
 	ComPtr<ID3DBlob> blobError;
 	::D3D12SerializeRootSignature(&sigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blobSignature, &blobError);
-	device->CreateRootSignature(0, blobSignature->GetBufferPointer(), blobSignature->GetBufferSize(), IID_PPV_ARGS(&_signature));
+	DEVICE->CreateRootSignature(0, blobSignature->GetBufferPointer(), blobSignature->GetBufferSize(), IID_PPV_ARGS(&_signature));
+}
+
+//기본 형태로 만들어 준다.
+void RootSignature::CreateSamplerDesc()
+{
+	_samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
 }
