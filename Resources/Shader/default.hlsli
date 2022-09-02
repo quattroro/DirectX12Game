@@ -5,11 +5,13 @@ cbuffer TEST_B0 : register(b0)
     float4 offset0;
 };
 
+//메테리얼과 관련된 인자들을 넘겨 받는다.
 cbuffer TEST_B1 : register(b1)
 {
     float4 offset1;
 };
 
+//메테리얼의 텍스쳐
 Texture2D tex_0 : register(t0);
 
 SamplerState sam_0 : register(s0);
