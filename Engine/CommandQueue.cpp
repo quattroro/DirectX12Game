@@ -61,7 +61,8 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 	_cmdList->Reset(_cmdAlloc.Get(), nullptr);
 
 	//스왑체인의 실질적인 부분
-	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(_swapChain->GetBackRTVBuffer().Get(),
+	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		_swapChain->GetBackRTVBuffer().Get(),
 		D3D12_RESOURCE_STATE_PRESENT,//화면출력
 		D3D12_RESOURCE_STATE_RENDER_TARGET);//외주 결과물
 
@@ -69,7 +70,8 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 	_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
 
 	//컨스턴트 버퍼도 여기서 사용
-	GEngine->GetCB()->Clear();
+	GEngine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM)->Clear();
+	GEngine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL)->Clear();
 
 	//descheap 여기서 사용
 	GEngine->GetTableDescHeap()->Clear();

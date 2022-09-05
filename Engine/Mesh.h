@@ -1,8 +1,9 @@
 #pragma once
 
-class Texture;
+class Material;
 
 // [유니티짱]과 같이 정점으로 이루어진 물체
+//유니티에서는 해당 클래스의 역할을 meshrenderer에서 한다.
 class Mesh
 {
 public:
@@ -11,8 +12,8 @@ public:
 
 	void SetTransform(const Transform& t) { _transform = t; }
 
-	void SetTexture(shared_ptr<Texture> tex) { _tex = tex; }
-
+	//void SetTexture(shared_ptr<Texture> tex) { _tex = tex; }
+	void SetMaterial(shared_ptr<Material> mat) { _mat = mat; }
 private:
 	void CreateVertexBuffer(const vector<Vertex>& buffer);
 	void CreateIndexBuffer(const vector<uint32>& buffer);
@@ -32,7 +33,7 @@ private:
 
 	Transform _transform = {};
 
-	shared_ptr<Texture> _tex = {};
-
+	//shared_ptr<Texture> _tex = {};
+	shared_ptr<Material> _mat = {};
 };
 

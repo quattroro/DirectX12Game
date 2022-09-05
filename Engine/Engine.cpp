@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Engine.h"
-
+#include "Material.h"
 
 void Engine::Init(const WindowInfo& info)
 {
@@ -17,12 +17,8 @@ void Engine::Init(const WindowInfo& info)
 	//_cb = make_shared<ConstantBuffer>();
 	_tableDescHeap = make_shared<TableDescriptorHeap>();
 	_depthStencilBuffer = make_shared<DepthStencilBuffer>();
-
 	_input = make_shared<Input>();
 	_timer = make_shared<Timer>();
-
-	CreateConstantBuffer(CBV_REGISTER::b0, sizeof(Transform), 256);
-	CreateConstantBuffer(CBV_REGISTER::b1, sizeof(MaterialParams), 256);
 
 	_device->Init();
 	_cmdQueue->Init(_device->GetDevice(), _swapChain);
@@ -34,6 +30,9 @@ void Engine::Init(const WindowInfo& info)
 
 	_input->Init(_window.hwnd);
 	_timer->Init();
+
+	CreateConstantBuffer(CBV_REGISTER::b0, sizeof(Transform), 256);
+	CreateConstantBuffer(CBV_REGISTER::b1, sizeof(MaterialParams), 256);
 
 	ResizeWindow(info.width, info.height);
 }

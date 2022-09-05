@@ -10,7 +10,7 @@ enum
 	MATERIAL_TEXTURE_COUNT = 5,
 };
 
-struct MaterialParams
+struct MaterialParams//여기의 인자들은 셰이더코드에서 형식을 맞춰준다.
 {
 	void SetInt(uint8 index, int32 value) { intParams[index] = value; }
 	void SetFloat(uint8 index, float value) { floatParams[index] = value; }

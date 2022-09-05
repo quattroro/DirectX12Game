@@ -2,6 +2,7 @@
 #include "Material.h"
 #include "Engine.h"
 
+//연관된 모든 친구들을 모아서 gpu 에 세팅한다.
 void Material::Update()
 {
 	// CBV 업로드

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Mesh.h"
 #include "Engine.h"
-
+#include "Material.h"
 void Mesh::Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexbuffer)//사용할 정점들을 받아서 초기화를 해준다.
 {
 	CreateVertexBuffer(vertexBuffer);
@@ -75,13 +75,14 @@ void Mesh::Render()
 	//2) TableDescHeap에다가 CBV 전달
 
 	//3) 모든 세팅이 끝났으면 TableDescHeap 커밋
-	{
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = GEngine->GetCB()->PushData(0, &_transform, sizeof(_transform));
-		//GEngine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b0);
 
-		GEngine->GetTableDescHeap()->SetSRV(_tex->GetCpuHandle(), SRV_REGISTER::t0);
-	}
+	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushData(&_transform, sizeof(_transform));
+	//D3D12_CPU_DESCRIPTOR_HANDLE handle = GEngine->GetCB()->PushData(0, &_transform, sizeof(_transform));
+	//GEngine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b0);
+
+	//GEngine->GetTableDescHeap()->SetSRV(_tex->GetCpuHandle(), SRV_REGISTER::t0);
 	
+	_mat->Update();
 	/*{
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = GEngine->GetCB()->PushData(0, &_transform, sizeof(_transform));
 		GEngine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b1);
