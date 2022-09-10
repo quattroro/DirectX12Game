@@ -76,13 +76,13 @@ void Mesh::Render()
 
 	//3) 葛电 技泼捞 场车栏搁 TableDescHeap 目乖
 
-	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushData(&_transform, sizeof(_transform));
+	
 	//D3D12_CPU_DESCRIPTOR_HANDLE handle = GEngine->GetCB()->PushData(0, &_transform, sizeof(_transform));
 	//GEngine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b0);
 
 	//GEngine->GetTableDescHeap()->SetSRV(_tex->GetCpuHandle(), SRV_REGISTER::t0);
 	
-	_mat->Update();
+	//_mat->Update();
 	/*{
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = GEngine->GetCB()->PushData(0, &_transform, sizeof(_transform));
 		GEngine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b1);
