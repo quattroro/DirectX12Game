@@ -30,7 +30,8 @@ public:
 	virtual void Update() { }
 	virtual void LateUpdate() { }
 
-public:
+	virtual void FinalUpdate() {}//엔진에서 내부적으로 사용하는 정말 최종 단계
+public: 
 	COMPONENT_TYPE GetType() { return _type; }
 	bool IsValid() { return _gameObject.expired() == false; }
 

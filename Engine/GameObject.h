@@ -17,6 +17,7 @@ public:
 	void Start();
 	void Update();
 	void LateUpdate();
+	void FinalUpdate();//엔진에서 내부적으로 사용하는 정말 최종 단계
 
 	shared_ptr<Transform> GetTransform();
 
