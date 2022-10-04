@@ -2,6 +2,19 @@
 #include "Mesh.h"
 #include "Engine.h"
 #include "Material.h"
+
+
+
+
+
+Mesh::Mesh():Object(OBJECT_TYPE::MESH)
+{
+
+}
+Mesh::~Mesh()
+{
+
+}
 void Mesh::Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexbuffer)//사용할 정점들을 받아서 초기화를 해준다.
 {
 	CreateVertexBuffer(vertexBuffer);

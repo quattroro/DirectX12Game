@@ -1,9 +1,10 @@
 #pragma once
-
+#include "Object.h"
 enum class COMPONENT_TYPE : uint8
 {
 	TRANSFORM,
 	MESH_RENDERER,
+	CAMERA,
 	// ...
 	MONO_BEHAVIOUR,
 	END,
@@ -17,8 +18,7 @@ enum
 class GameObject;
 class Transform;
 
-
-class Component
+class Component:public Object
 {
 public:
 	Component(COMPONENT_TYPE type);
@@ -29,9 +29,9 @@ public:
 	virtual void Start() { }
 	virtual void Update() { }
 	virtual void LateUpdate() { }
+	virtual void FinalUpdate() { }//엔진에서 내부적으로 사용하는 정말 최종 단계
 
-	virtual void FinalUpdate() {}//엔진에서 내부적으로 사용하는 정말 최종 단계
-public: 
+public:
 	COMPONENT_TYPE GetType() { return _type; }
 	bool IsValid() { return _gameObject.expired() == false; }
 
@@ -45,6 +45,5 @@ private:
 protected:
 	COMPONENT_TYPE _type;
 	weak_ptr<GameObject> _gameObject;//게임보브젝트와 서로서로 가지고 잇어야 하는데 Shared_ptr로 만들면 카운트가 줄어들지 않는 문제가 생기기 때문 
-
 };
 

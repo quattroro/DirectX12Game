@@ -1,10 +1,8 @@
 
-
-cbuffer TEST_B0 : register(b0)
+cbuffer TRANSFORM_PARAMS : register(b0)
 {
-    float4 offset0;
+    row_major/*행렬 접근순서가 셰이더랑 다렉이랑 다르기 때문에 순서를 맞춰주기 위해서*/  matrix matWVP;
 };
-
 //메테리얼과 관련된 인자들을 넘겨 받는다.
 cbuffer MATERIAL_PARAMS : register(b1)
 {
@@ -32,14 +30,17 @@ SamplerState sam_0 : register(s0);
 struct VS_IN
 {
     float3 pos : POSITION;
-    float4 color : COLOR;
+    //float4 color : COLOR;
     float2 uv : TEXCOORD;
+
+
+
 };
 
 struct VS_OUT
 {
     float4 pos : SV_Position;
-    float4 color : COLOR;
+    //float4 color : COLOR;
     float2 uv : TEXCOORD;
 };
 
@@ -47,15 +48,8 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT)0;
 
-    output.pos = float4(input.pos, 1.f);
-    //output.pos += offset0;
-
-    output.pos.x += float_0;
-    output.pos.y += float_1;
-    output.pos.z += float_2;
-
-
-    output.color = input.color;
+    output.pos = mul(float4(input.pos, 1.f), matWVP);
+    //output.color = input.color;
     output.uv = input.uv;
 
     return output;

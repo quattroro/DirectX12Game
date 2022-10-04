@@ -1,11 +1,9 @@
 #pragma once
 
-//std::byte 사용하지 않음
+// std::byte 사용하지 않음
 #define _HAS_STD_BYTE 0
 
-
-//각종 include 
-
+// 각종 include
 #include <windows.h>
 #include <tchar.h>
 #include <memory>
@@ -16,13 +14,11 @@
 #include <map>
 using namespace std;
 
-
-
 #include <filesystem>
 namespace fs = std::filesystem;
 
-#include "SimpleMath.h"
 #include "d3dx12.h"
+#include "SimpleMath.h"
 #include <d3d12.h>
 #include <wrl.h>
 #include <d3dcompiler.h>
@@ -37,7 +33,6 @@ using namespace Microsoft::WRL;
 #include <DirectXTex/DirectXTex.h>
 #include <DirectXTex/DirectXTex.inl>
 
-
 // 각종 lib
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
@@ -45,11 +40,10 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "d3dcompiler")
 
 #ifdef _DEBUG
-#pragma comment(lib,"DirectXTex\\DirectXTex_debug.lib")
+#pragma comment(lib, "DirectXTex\\DirectXTex_debug.lib")
 #else
-#pragma comment(lib,"DirectXTex\\DirectXTex.lib")
+#pragma comment(lib, "DirectXTex\\DirectXTex.lib")
 #endif
-
 
 // 각종 typedef
 using int8 = __int8;
@@ -65,7 +59,7 @@ using Vec3 = DirectX::SimpleMath::Vector3;
 using Vec4 = DirectX::SimpleMath::Vector4;
 using Matrix = DirectX::SimpleMath::Matrix;
 
-enum class CBV_REGISTER:uint8
+enum class CBV_REGISTER : uint8
 {
 	b0,
 	b1,
@@ -75,8 +69,8 @@ enum class CBV_REGISTER:uint8
 
 	END
 };
- 
-enum class SRV_REGISTER:uint8
+
+enum class SRV_REGISTER : uint8
 {
 	t0 = static_cast<uint8>(CBV_REGISTER::END),
 	t1,
@@ -86,6 +80,7 @@ enum class SRV_REGISTER:uint8
 
 	END
 };
+
 enum
 {
 	SWAP_CHAIN_BUFFER_COUNT = 2,
@@ -94,25 +89,33 @@ enum
 	REGISTER_COUNT = CBV_REGISTER_COUNT + SRV_REGISTER_COUNT,
 };
 
-
 struct WindowInfo
 {
-	HWND hwnd;
-	int32 width;
-	int32 height;
-	bool windowed;
+	HWND	hwnd; // 출력 윈도우
+	int32	width; // 너비
+	int32	height; // 높이
+	bool	windowed; // 창모드 or 전체화면
 };
 
 struct Vertex
 {
+	Vertex() {}
+	Vertex(Vec3 p, Vec2 u, Vec3 n, Vec3 t):pos(p),uv(u),normal(n),tangent(t)
+	{
+
+	}
+
 	Vec3 pos;
-	Vec4 color;
 	Vec2 uv;
+	Vec3 normal;
+	Vec3 tangent;
+
+
 };
 
 #define DECLARE_SINGLE(type)		\
 private:							\
-	type(){}						\
+	type() {}						\
 	~type() {}						\
 public:								\
 	static type* GetInstance()		\
@@ -123,20 +126,19 @@ public:								\
 
 #define GET_SINGLE(type)	type::GetInstance()
 
-
-
 #define DEVICE				GEngine->GetDevice()->GetDevice()
 #define CMD_LIST			GEngine->GetCmdQueue()->GetCmdList()
-#define ROOT_SIGNATURE		GEngine->GetRootSignature()->GetSignature()
 #define RESOURCE_CMD_LIST	GEngine->GetCmdQueue()->GetResourceCmdList()
+#define ROOT_SIGNATURE		GEngine->GetRootSignature()->GetSignature()
 
 #define INPUT				GET_SINGLE(Input)
-#define DELTA_TIME			GET_SINGLE(Timer)->GetDeltaTime();
+#define DELTA_TIME			GET_SINGLE(Timer)->GetDeltaTime()
 
-#define CONST_BUFFER(type)  GEngine->GetConstantBuffer(type)
+#define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
+
+struct TransformParams
+{
+	Matrix matWVP;
+};
 
 extern unique_ptr<class Engine> GEngine;
-
-
-
-

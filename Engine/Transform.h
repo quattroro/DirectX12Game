@@ -1,13 +1,7 @@
 #pragma once
 #include "Component.h"
 
-
-struct TransformMatrix
-{
-	Vec4 offset;
-};
-
-class Transform:public Component
+class Transform : public Component
 {
 public:
 	Transform();
@@ -23,7 +17,7 @@ public:
 	const Vec3& GetLocalScale() { return _localScale; }
 
 	const Matrix& GetLocalToWorldMatrix() { return _matWorld; }
-	const Vec3& GetWorldPosition() { return _matWorld.Translation(); }
+	const Vec3& GetWorldPosition() { return _matWorld.Translation(); }// 행렬에서 트랜스폼 정보만 빼온다.
 
 	Vec3 GetRight() { return _matWorld.Right(); }
 	Vec3 GetUp() { return _matWorld.Up(); }
@@ -38,14 +32,13 @@ public:
 	weak_ptr<Transform> GetParent() { return _parent; }
 
 private:
+	// Parent 기준
+	Vec3 _localPosition = {};
+	Vec3 _localRotation = {};
+	Vec3 _localScale = { 1.f, 1.f, 1.f };
 
-	//parent 기준
-	Vec3 _localPosition;
-	Vec3 _localRotation;
-	Vec3 _localScale = { 1.f,1.f,1.f };
-
+	Matrix _matLocal = {};
 	Matrix _matWorld = {};
-	Matrix _matLacal = {};
 
 	weak_ptr<Transform> _parent;
 };

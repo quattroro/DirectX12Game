@@ -1,8 +1,12 @@
 #pragma once
+#include "Object.h"
 //텍스쳐를 로딩하고 관리하는 클래스
-class Texture
+class Texture:public Object
 {
 public:
+	Texture();
+	virtual ~Texture();
+
 	void Init(const wstring& path);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandle() { return _srvHandle; }
@@ -17,6 +21,6 @@ private:
 
 	//이 친구는 뷰를 하나만 사용 한다.(하나를 처음에 로딩 하고 계속 사용할 것이기 때문에)
 	ComPtr<ID3D12DescriptorHeap>	_srvHeap;
-	D3D12_CPU_DESCRIPTOR_HANDLE		_srvHandle;
+	D3D12_CPU_DESCRIPTOR_HANDLE		_srvHandle = {};
 };
 

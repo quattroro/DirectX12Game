@@ -2,8 +2,20 @@
 #include "Material.h"
 #include "Engine.h"
 
+
+Material::Material():Object(OBJECT_TYPE::MATERIAL)
+{
+
+}
+
+Material::~Material()
+{
+
+}
+
+
 //연관된 모든 친구들을 모아서 gpu 에 세팅한다.
-void Material::Update()
+void Material::PushData()
 {
 	// CBV 업로드
 	CONST_BUFFER(CONSTANT_BUFFER_TYPE::MATERIAL)->PushData(&_params, sizeof(_params));
