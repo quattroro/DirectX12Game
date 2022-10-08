@@ -17,7 +17,7 @@ public:
 	const Vec3& GetLocalScale() { return _localScale; }
 
 	const Matrix& GetLocalToWorldMatrix() { return _matWorld; }
-	const Vec3& GetWorldPosition() { return _matWorld.Translation(); }// 행렬에서 트랜스폼 정보만 빼온다.
+	Vec3 GetWorldPosition() { return _matWorld.Translation(); }// 행렬에서 트랜스폼 정보만 빼온다.
 
 	Vec3 GetRight() { return _matWorld.Right(); }
 	Vec3 GetUp() { return _matWorld.Up(); }

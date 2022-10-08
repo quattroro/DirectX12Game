@@ -2,18 +2,20 @@
 #include "Shader.h"
 #include "Engine.h"
 
-Shader::Shader():Object(OBJECT_TYPE::SHADER)
+Shader::Shader() : Object(OBJECT_TYPE::SHADER)
 {
+
 }
 
 Shader::~Shader()
 {
+
 }
 
 void Shader::Init(const wstring& path)
 {
-	CreateVertexShader(path, "VS_Main", "vs_5_0");//직접 만들어준 쉐이더를 불러온다.
-	CreatePixelShader(path, "PS_Main", "ps_5_0");//직접 만들어준 쉐이더를 불러온다.
+	CreateVertexShader(path, "VS_Main", "vs_5_0");
+	CreatePixelShader(path, "PS_Main", "ps_5_0");
 
 	D3D12_INPUT_ELEMENT_DESC desc[] =
 	{
@@ -21,13 +23,6 @@ void Shader::Init(const wstring& path)
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-
-		//{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		////{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		//{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		//{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-
-
 	};
 
 	_pipelineDesc.InputLayout = { desc, _countof(desc) };
@@ -36,15 +31,11 @@ void Shader::Init(const wstring& path)
 	_pipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	_pipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	_pipelineDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-
-	/*_pipelineDesc.DepthStencilState.DepthEnable = FALSE;
-	_pipelineDesc.DepthStencilState.StencilEnable = FALSE;*/
 	_pipelineDesc.SampleMask = UINT_MAX;
 	_pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	_pipelineDesc.NumRenderTargets = 1;
 	_pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	_pipelineDesc.SampleDesc.Count = 1;
-
 	_pipelineDesc.DSVFormat = GEngine->GetDepthStencilBuffer()->GetDSVFormat();
 
 	DEVICE->CreateGraphicsPipelineState(&_pipelineDesc, IID_PPV_ARGS(&_pipelineState));

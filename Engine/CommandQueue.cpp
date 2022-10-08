@@ -86,7 +86,7 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 
 	
 	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = _swapChain->GetBackRTV();//백버퍼를 꺼내오고
-	_cmdList->ClearRenderTargetView(backBufferView, Colors::LightSteelBlue, 0, nullptr);//그려달라고 그래픽카드에게 요청한다.
+	_cmdList->ClearRenderTargetView(backBufferView, Colors::Black, 0, nullptr);//그려달라고 그래픽카드에게 요청한다.
 	
 
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = GEngine->GetDepthStencilBuffer()->GetDSVCpuHandle();

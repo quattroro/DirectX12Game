@@ -32,8 +32,6 @@ void ConstantBuffer::Init(CBV_REGISTER reg, uint32 size, uint32 count)
 	CreateView();
 }
 
-
-
 void ConstantBuffer::CreateBuffer()
 {
 	uint32 bufferSize = _elementSize * _elementCount;
@@ -47,17 +45,14 @@ void ConstantBuffer::CreateBuffer()
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&_cbvBuffer));
-
 	//프레임마다 계속 사용하기 때문에 바로 unmap을 하지 않는다.
 	_cbvBuffer->Map(0, nullptr, reinterpret_cast<void**>(&_mappedBuffer));
 	// We do not need to unmap until we are done with the resource.  However, we must not write to
 	// the resource while it is in use by the GPU (so we must use synchronization techniques).
 }
 
-//desc heap 함수
 void ConstantBuffer::CreateView()
 {
-
 	D3D12_DESCRIPTOR_HEAP_DESC cbvDesc = {};
 	cbvDesc.NumDescriptors = _elementCount;
 	cbvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;//생성할때는 기본으로 만들어 주어야 효율적으로 동작한다.
@@ -79,7 +74,6 @@ void ConstantBuffer::CreateView()
 	}
 }
 
-
 void ConstantBuffer::Clear()
 {
 	_currentIndex = 0;
@@ -87,23 +81,22 @@ void ConstantBuffer::Clear()
 
 void ConstantBuffer::PushData(void* buffer, uint32 size)
 {
-	assert(_currentIndex < _elementCount);//버퍼의 크기를 벗어놨는지 디버깅용
-	assert(_elementSize == ((size + 255) & ~255));
-
-
+	assert(_currentIndex < _elementCount); // 버퍼의 크기를 벗어놨는지 디버깅용
+		assert(_elementSize == ((size + 255) & ~255));
 
 	::memcpy(&_mappedBuffer[_currentIndex * _elementSize], buffer, size);//만들어진 버퍼에 데이터를 넣어준다.
 
-	/*D3D12_GPU_VIRTUAL_ADDRESS address = GetGpuVirtualAddress(_currentIndex);
-	CMD_LIST->SetGraphicsRootConstantBufferView(rootParamIndex, address);*/
-
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCpuHandle(_currentIndex);
-
 	GEngine->GetTableDescHeap()->SetCBV(cpuHandle, _reg);
 
 	_currentIndex++;
+}
 
-	//return cpuHandle;
+void ConstantBuffer::SetGlobalData(void* buffer, uint32 size)
+{
+	assert(_elementSize == ((size + 255) & ~255));
+	::memcpy(&_mappedBuffer[0], buffer, size);
+	CMD_LIST->SetGraphicsRootConstantBufferView(0, GetGpuVirtualAddress(0));
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS ConstantBuffer::GetGpuVirtualAddress(uint32 index)

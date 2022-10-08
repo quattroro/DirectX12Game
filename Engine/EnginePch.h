@@ -100,17 +100,16 @@ struct WindowInfo
 struct Vertex
 {
 	Vertex() {}
-	Vertex(Vec3 p, Vec2 u, Vec3 n, Vec3 t):pos(p),uv(u),normal(n),tangent(t)
-	{
 
+	Vertex(Vec3 p, Vec2 u, Vec3 n, Vec3 t)
+		: pos(p), uv(u), normal(n), tangent(t)
+	{
 	}
 
 	Vec3 pos;
 	Vec2 uv;
 	Vec3 normal;
 	Vec3 tangent;
-
-
 };
 
 #define DECLARE_SINGLE(type)		\
@@ -136,8 +135,13 @@ public:								\
 
 #define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
 
+//해당 정보는 Transfrom의 PushData에서 보내준다.
 struct TransformParams
 {
+	Matrix matWorld;
+	Matrix matView;
+	Matrix matProjection;
+	Matrix matWV;
 	Matrix matWVP;
 };
 

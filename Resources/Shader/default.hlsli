@@ -1,62 +1,62 @@
+#ifndef _DEFAULT_HLSLI_
+#define _DEFAULT_HLSLI_
 
-cbuffer TRANSFORM_PARAMS : register(b0)
-{
-    row_major/*행렬 접근순서가 셰이더랑 다렉이랑 다르기 때문에 순서를 맞춰주기 위해서*/  matrix matWVP;
-};
-//메테리얼과 관련된 인자들을 넘겨 받는다.
-cbuffer MATERIAL_PARAMS : register(b1)
-{
-    int int_0;
-    int int_1;
-    int int_2;
-    int int_3;
-    int int_4;
-    float float_0;
-    float float_1;
-    float float_2;
-    float float_3;
-    float float_4;
-};
+#include "params.hlsli"
+#include "utils.hlsli"
 
-//메테리얼의 텍스쳐
-Texture2D tex_0 : register(t0);
-Texture2D tex_1 : register(t1);
-Texture2D tex_2 : register(t2);
-Texture2D tex_3 : register(t3);
-Texture2D tex_4 : register(t4);
-
-SamplerState sam_0 : register(s0);
-
+//이것들은 Shader.cpp 에서 넣어준다.
 struct VS_IN
 {
     float3 pos : POSITION;
-    //float4 color : COLOR;
     float2 uv : TEXCOORD;
-
-
-
+    float3 normal : NORMAL;
 };
 
 struct VS_OUT
 {
     float4 pos : SV_Position;
-    //float4 color : COLOR;
     float2 uv : TEXCOORD;
+    float3 viewPos : POSITION;
+    float3 viewNormal : NORMAL;
 };
 
+//정점 셰이더
 VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT)0;
 
-    output.pos = mul(float4(input.pos, 1.f), matWVP);
+    output.pos = mul(float4(input.pos, 1.f), g_matWVP);
     //output.color = input.color;
     output.uv = input.uv;
+
+    output.viewPos = mul(float4(input.pos, 1.f), g_matWV).xyz;//빛 연산에 쓰기 위해서 프로젝션 단계를 하기 이전의 값을 보내준다.
+    output.viewNormal = normalize(mul(float4(input.normal, 0.f), g_matWV).xyz);
 
     return output;
 }
 
+//픽셀 셰이더
 float4 PS_Main(VS_OUT input) : SV_Target
 {
-    float4 color = tex_0.Sample(sam_0, input.uv);
+    //float4 color = tex_0.Sample(g_sam_0, input.uv);
+    float4 color = float4(1.f,1.f,1.f,1.f);
+
+    LightColor totalColor = (LightColor)0.f;
+
+    //각각의 픽셀마다 빛에대한 컬러들을 구해서 세팅해준다.
+    for (int i = 0; i < g_lightCount; ++i)
+    {
+        LightColor color = CalculateLightColor(i, input.viewNormal, input.viewPos);
+        totalColor.diffuse += color.diffuse;
+        totalColor.ambient += color.ambient;
+        totalColor.specular += color.specular;
+    }
+
+    color.xyz = (totalColor.diffuse.xyz * color.xyz)
+        + totalColor.ambient.xyz * color.xyz
+        + totalColor.specular.xyz;
+
     return color;
 }
+
+#endif 
