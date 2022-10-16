@@ -83,7 +83,7 @@ void Texture::CreateView()
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Format = _image.GetMetadata().format;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//통짜 텍스쳐 하나만 사용 /*D3D12_SRV_DIMENSION_TEXTURECUBE 등의 다른 옵션도 존재*/
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Texture2D.MipLevels = 1;
 	DEVICE->CreateShaderResourceView(_tex2D.Get(), &srvDesc, _srvHandle);

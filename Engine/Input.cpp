@@ -8,6 +8,10 @@ void Input::Init(HWND hwnd)
 	_states.resize(KEY_TYPE_COUNT, KEY_STATE::NONE);
 }
 
+
+
+//각각의 움직임은 각가의 객체에서 알아서 한다.
+//카메라 움직임은 TextCameraScript에서
 void Input::Update()
 {
 	HWND hwnd = ::GetActiveWindow();
