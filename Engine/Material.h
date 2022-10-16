@@ -14,16 +14,17 @@ struct MaterialParams//여기의 인자들은 셰이더코드에서 형식을 맞춰준다.
 {
 	void SetInt(uint8 index, int32 value) { intParams[index] = value; }
 	void SetFloat(uint8 index, float value) { floatParams[index] = value; }
+	void SetTexOn(uint8 index, int32 value) { texOnParams[index] = value; }
 
 	array<int32, MATERIAL_INT_COUNT> intParams;
 	array<float, MATERIAL_FLOAT_COUNT> floatParams;
+	array<int32, MATERIAL_TEXTURE_COUNT> texOnParams;
 };
 
 class Material :public Object
 {
 public:
 	Material();
-
 	virtual ~Material();
 
 	shared_ptr<Shader> GetShader() { return _shader; }
@@ -31,7 +32,11 @@ public:
 	void SetShader(shared_ptr<Shader> shader) { _shader = shader; }
 	void SetInt(uint8 index, int32 value) { _params.SetInt(index, value); }
 	void SetFloat(uint8 index, float value) { _params.SetFloat(index, value); }
-	void SetTexture(uint8 index, shared_ptr<Texture> texture) { _textures[index] = texture; }
+	void SetTexture(uint8 index, shared_ptr<Texture> texture)
+	{
+		_textures[index] = texture;
+		_params.SetTexOn(index, (texture == nullptr ? 0 : 1));
+	}
 
 	void PushData();
 

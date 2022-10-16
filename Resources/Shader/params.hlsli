@@ -38,7 +38,9 @@ cbuffer TRANSFORM_PARAMS : register(b1)
 
     row_major/*행렬 접근순서가 셰이더랑 다렉이랑 다르기 때문에 순서를 맞춰주기 위해서*/  matrix g_matWVP;
 };
-//메테리얼과 관련된 인자들을 넘겨 받는다.
+
+//머테리얼에 정보가 있다.
+//메테리얼과 관련된 인자들을 넘겨 받는다. 메테리얼 파람즈와 같은 형식 이어야 한다.
 cbuffer MATERIAL_PARAMS : register(b2)
 {
     int g_int_0;
@@ -51,6 +53,11 @@ cbuffer MATERIAL_PARAMS : register(b2)
     float g_float_2;
     float g_float_3;
     float g_float_4;
+    int g_tex_on_0;
+    int g_tex_on_1;
+    int g_tex_on_2;
+    int g_tex_on_3;
+    int g_tex_on_4;
 };
 
 //메테리얼의 텍스쳐

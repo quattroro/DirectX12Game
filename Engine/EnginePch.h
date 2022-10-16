@@ -109,7 +109,7 @@ struct Vertex
 	Vec3 pos;
 	Vec2 uv;
 	Vec3 normal;
-	Vec3 tangent;
+	Vec3 tangent;//노말맵 적용에 사용
 };
 
 #define DECLARE_SINGLE(type)		\
