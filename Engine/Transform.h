@@ -16,6 +16,9 @@ public:
 	const Vec3& GetLocalRotation() { return _localRotation; }
 	const Vec3& GetLocalScale() { return _localScale; }
 
+	// TEMP frustum 컬링 테스트를 위해 임시로 로컬 스케일을 이용해 바운딩 영역을 지정
+	float GetBoundingSphereRadius() { return max(max(_localScale.x, _localScale.y), _localScale.z); }
+
 	const Matrix& GetLocalToWorldMatrix() { return _matWorld; }
 	Vec3 GetWorldPosition() { return _matWorld.Translation(); }// 행렬에서 트랜스폼 정보만 빼온다.
 
