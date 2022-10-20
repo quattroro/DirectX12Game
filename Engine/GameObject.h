@@ -32,10 +32,17 @@ public:
 	void SetCheckFrustum(bool checkFrustum) { _checkFrustum = checkFrustum; }
 	bool GetCheckFrustum() { return _checkFrustum; }
 
+	//레이어 세팅
+	void SetLayerIndex(uint8 layer) { _layerIndex = layer; }
+	uint8 GetLayerIndex() { return _layerIndex; }
+
 private:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> _components;
 	vector<shared_ptr<MonoBehaviour>> _scripts;
 
 	bool _checkFrustum = true;
+
+	//자기 자신의 layer, 모든 레이어는 씬 매니저 에서 관리한다
+	uint8 _layerIndex = 0;
 };
 

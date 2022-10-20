@@ -2,6 +2,9 @@
 #include "TableDescriptorHeap.h"
 #include "Engine.h"
 
+//RTV는 스왑체인에서 관리한다!!!!!
+//스왑체인에서 찾아라!!
+
 void TableDescriptorHeap::Init(uint32 count)//몇개를 만들 것이냐
 {
 	_groupCount = count;

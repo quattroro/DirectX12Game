@@ -13,6 +13,9 @@
 #include "TestCameraScript.h"
 #include "Resources.h"
 
+//엔진에서 UI를 표시 할때에는 UI만 따로 찍는 카메라가 필요함
+//그런데 이렇게 여러개의 카메라를 쏘기 위해서는 UI인지 아닌지 판별하기위한 장치가 필요한데
+//그것이 Layer이다
 
 
 void SceneManager::Update()
@@ -51,6 +54,27 @@ void SceneManager::LoadScene(wstring sceneName)
 	_activeScene->Awake();
 	_activeScene->Start();
 }
+
+void SceneManager::SetLayerName(uint8 index, const wstring& name)
+{
+	// 기존 데이터 삭제
+	const wstring& prevName = _layerNames[index];
+	_layerIndex.erase(prevName);
+
+	_layerNames[index] = name;
+	_layerIndex[name] = index;
+}
+
+uint8 SceneManager::LayerNameToIndex(const wstring& name)
+{
+	auto findIt = _layerIndex.find(name);
+	if (findIt == _layerIndex.end())
+		return 0;
+
+	return findIt->second;
+}
+
+
 
 shared_ptr<Scene> SceneManager::LoadTestScene()
 {
@@ -99,7 +123,7 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 //	{
 //		shared_ptr<Shader> shader = make_shared<Shader>();
 //		shared_ptr<Texture> texture = make_shared<Texture>();
-//		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
+//		shader->Init(L"..\\Resources\\Shader\\default.fx");
 //		texture->Init(L"..\\Resources\\Texture\\veigar.jpg");
 //		shared_ptr<Material> material = make_shared<Material>();
 //		material->SetShader(shader);
@@ -113,14 +137,44 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 //	scene->AddGameObject(gameObject);
 //#pragma endregion
 
-#pragma region Camera
-	shared_ptr<GameObject> camera = make_shared<GameObject>();
-	camera->AddComponent(make_shared<Transform>());
-	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45도
-	camera->AddComponent(make_shared<TestCameraScript>());
-	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
-	scene->AddGameObject(camera);
+	//사용할 레이어들 정의
+#pragma region LayerMask
+	SetLayerName(0, L"Default");
+	SetLayerName(1, L"UI");
 #pragma endregion
+
+#pragma region Camera
+	{
+		shared_ptr<GameObject> camera = make_shared<GameObject>();
+		camera->SetName(L"Main_Camera");
+		camera->AddComponent(make_shared<Transform>());
+		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45도
+		camera->AddComponent(make_shared<TestCameraScript>());
+		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
+
+		//1번 카메라는 UI는 찍지 않는다
+		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
+		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI는 안 찍음
+
+		scene->AddGameObject(camera);
+	}
+#pragma endregion
+
+#pragma region UI_Camera
+	{
+		shared_ptr<GameObject> camera = make_shared<GameObject>();
+		camera->SetName(L"Orthographic_Camera");
+		camera->AddComponent(make_shared<Transform>());
+		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, 800*600
+		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
+		camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
+		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
+		camera->GetCamera()->SetCullingMaskAll(); // 다 끄고
+		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI만 찍음
+		scene->AddGameObject(camera);
+	}
+#pragma endregion
+
 
 #pragma region SkyBox
 	{
@@ -133,11 +187,14 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 			meshRenderer->SetMesh(sphereMesh);
 		}
 		{
-			shared_ptr<Shader> shader = make_shared<Shader>();
-			shared_ptr<Texture> texture = make_shared<Texture>();
-			shader->Init(L"..\\Resources\\Shader\\skybox.hlsli",
+			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Skybox");
+			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Sky01", L"..\\Resources\\Texture\\Sky01.jpg");
+
+
+			/*shared_ptr<Texture> texture = make_shared<Texture>();
+			shader->Init(L"..\\Resources\\Shader\\skybox.fx",
 				{ RASTERIZER_TYPE::CULL_NONE, DEPTH_STENCIL_TYPE::LESS_EQUAL });
-			texture->Init(L"..\\Resources\\Texture\\Sky01.jpg");
+			texture->Init(L"..\\Resources\\Texture\\Sky01.jpg");*/
 			shared_ptr<Material> material = make_shared<Material>();
 			material->SetShader(shader);
 			material->SetTexture(0, texture);
@@ -160,16 +217,47 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 			meshRenderer->SetMesh(sphereMesh);
 		}
 		{
-			shared_ptr<Shader> shader = make_shared<Shader>();
+			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Forward");
+			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Leather", L"..\\Resources\\Texture\\Leather.jpg");
+			shared_ptr<Texture> texture2 = GET_SINGLE(Resources)->Load<Texture>(L"Leather_Normal", L"..\\Resources\\Texture\\Leather_Normal.jpg");
+
+			/*shared_ptr<Shader> shader = make_shared<Shader>();
 			shared_ptr<Texture> texture = make_shared<Texture>();
 			shared_ptr<Texture> texture2 = make_shared<Texture>();
-			shader->Init(L"..\\Resources\\Shader\\default.hlsli");
+			shader->Init(L"..\\Resources\\Shader\\default.fx");
 			texture->Init(L"..\\Resources\\Texture\\Leather.jpg");
-			texture2->Init(L"..\\Resources\\Texture\\Leather_Normal.jpg");
+			texture2->Init(L"..\\Resources\\Texture\\Leather_Normal.jpg");*/
+
+
 			shared_ptr<Material> material = make_shared<Material>();
 			material->SetShader(shader);
 			material->SetTexture(0, texture);
 			material->SetTexture(1, texture2);
+			meshRenderer->SetMaterial(material);
+		}
+		sphere->AddComponent(meshRenderer);
+		scene->AddGameObject(sphere);
+	}
+#pragma endregion
+
+#pragma region UI_Test
+	{
+		shared_ptr<GameObject> sphere = make_shared<GameObject>();
+		sphere->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+		sphere->AddComponent(make_shared<Transform>());
+		sphere->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+		sphere->GetTransform()->SetLocalPosition(Vec3(0, 0, 500.f));//깊이값은 중요하지 않지만 설정
+		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+		{
+			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+			meshRenderer->SetMesh(mesh);
+		}
+		{
+			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Forward");
+			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Leather", L"..\\Resources\\Texture\\Leather.jpg");
+			shared_ptr<Material> material = make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
 			meshRenderer->SetMaterial(material);
 		}
 		sphere->AddComponent(meshRenderer);
@@ -245,7 +333,7 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 //		{
 //			shared_ptr<Shader> shader = make_shared<Shader>();
 //			shared_ptr<Texture> texture = make_shared<Texture>();
-//			shader->Init(L"..\\Resources\\Shader\\default.hlsli");
+//			shader->Init(L"..\\Resources\\Shader\\default.fx");
 //			texture->Init(L"..\\Resources\\Texture\\veigar.jpg");
 //			shared_ptr<Material> material = make_shared<Material>();
 //			material->SetShader(shader);

@@ -1,8 +1,8 @@
-#ifndef _DEFAULT_HLSLI_
-#define _DEFAULT_HLSLI_
+#ifndef _DEFAULT_FX_
+#define _DEFAULT_FX_
 
-#include "params.hlsli"
-#include "utils.hlsli"
+#include "params.fx"
+#include "utils.fx"
 
 //이것들은 Shader.cpp 에서 넣어준다.
 struct VS_IN

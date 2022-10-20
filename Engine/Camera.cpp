@@ -30,14 +30,16 @@ void Camera::FinalUpdate()
 	else
 		_matProjection = ::XMMatrixOrthographicLH(width * _scale, height * _scale, _near, _far);
 
-	S_MatView = _matView;
-	S_MatProjection = _matProjection;
 
 	_frustum.FinalUpdate();
 }
 
 void Camera::Render()
 {
+	S_MatView = _matView;
+	S_MatProjection = _matProjection;
+
+
 	shared_ptr<Scene> scene = GET_SINGLE(SceneManager)->GetActiveScene();
 
 	// TODO : Layer 구분
@@ -48,10 +50,15 @@ void Camera::Render()
 		if (gameObject->GetMeshRenderer() == nullptr)
 			continue;
 
+		//현재 게임 오브젝트의 레이어가 내가 그려야 하는 레이어 인지 아닌지 확인
+		if (IsCulled(gameObject->GetLayerIndex()))
+			continue;
+
 		//frustum컬링을 적용할 개체인지 아닌지 적용할 수있도록 GameObject에 있다.
 		//컬링을 진행하지 않고 항상 화면에 보여야 하는 물체가 있기 때문
 		if (gameObject->GetCheckFrustum())
 		{
+
 			if (_frustum.ContainsSphere(
 				gameObject->GetTransform()->GetWorldPosition(),
 				gameObject->GetTransform()->GetBoundingSphereRadius()) == false)

@@ -11,6 +11,8 @@ class Resources
 {
 	DECLARE_SINGLE(Resources);
 public:
+	void Init();
+
 	template<typename T>
 	shared_ptr<T> Load(const wstring& key, const wstring& path);
 
@@ -23,8 +25,13 @@ public:
 	template<typename T>
 	OBJECT_TYPE GetObjectType();
 
+	shared_ptr<Mesh> LoadRectangleMesh();
 	shared_ptr<Mesh> LoadCubeMesh();
 	shared_ptr<Mesh> LoadSphereMesh();
+
+private:
+	//계속 게임오브젝트를 생성할때마다 셰이더와 마테리얼 등등을 계속 생성할 필요가 없도록 디폴트셰이더를 만들어 준다.
+	void CreateDefaultShader();
 
 private:
 	using KeyObjMap = std::map<wstring/*key*/, shared_ptr<Object>>;

@@ -1,5 +1,5 @@
-#ifndef _PARAMS_HLSLI_
-#define _PARAMS_HLSLI_
+#ifndef _PARAMS_FX_
+#define _PARAMS_FX_
 
 
 //Light의 정보들을 그대로 받아온다.
