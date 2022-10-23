@@ -14,10 +14,15 @@ public:
 	virtual ~Camera();
 
 	virtual void FinalUpdate() override;
-	void Render();
+	//void Render();
 
 	void SetProjectionType(PROJECTION_TYPE type) { _type = type; }
 	PROJECTION_TYPE GetProjectionType() { return _type; }
+
+	void SortGameObject();
+	void Render_Deferred();
+	void Render_Forward();
+
 
 private:
 	PROJECTION_TYPE _type = PROJECTION_TYPE::PERSPECTIVE;
@@ -48,6 +53,11 @@ public:
 	void SetCullingMaskAll() { SetCullingMask(UINT32_MAX); }//모든비트를 1로 채운다 -> 아무것도 찍지 않는다.
 	void SetCullingMask(uint32 mask) { _cullingMask = mask; }
 	bool IsCulled(uint8 layer) { return (_cullingMask & (1 << layer)) != 0; }
+
+	//네가 찍어야되는 값들을 임시로 저장하고 있는다.
+private:
+	vector<shared_ptr<GameObject>>	_vecDeferred;
+	vector<shared_ptr<GameObject>>	_vecForward;
 
 public:
 	// TEMP

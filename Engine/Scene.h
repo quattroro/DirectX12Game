@@ -13,6 +13,9 @@ public:
 	void FinalUpdate();
 
 	void Render();
+	void RenderLights();
+	void RenderFinal();
+
 private:
 	void PushLightData();
 
@@ -24,5 +27,9 @@ public:
 
 private:
 	vector<shared_ptr<GameObject>> _gameObjects;
+
+	//카메라와 라이트 게임 오브젝트는 따로 관리한다.
+	vector<shared_ptr<class Camera>>	_cameras;
+	vector<shared_ptr<class Light>>		_lights;
 };
 

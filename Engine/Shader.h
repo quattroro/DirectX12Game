@@ -1,6 +1,14 @@
 #pragma once
 #include "Object.h"
 
+//해당 셰이더가 디퍼드인지 포워드 인지
+enum class SHADER_TYPE : uint8
+{
+	DEFERRED,
+	FORWARD,
+	LIGHTING,
+};
+
 //스카이박스를 추가 하면서 컬링 모드를 바꿔줄 필요가 생깁
 enum class RASTERIZER_TYPE
 {
@@ -17,13 +25,31 @@ enum class DEPTH_STENCIL_TYPE
 	LESS_EQUAL,//값이 같을때도 그려준다.
 	GREATER,//값이 클때만 그려준다.
 	GREATER_EQUAL,
+
+	//빛 연산을 할때는 깊이를 신경쓰면 안되기 때문에 이런 옵션들이 필요
+	NO_DEPTH_TEST, // 깊이 테스트(X) + 깊이 기록(O)
+	NO_DEPTH_TEST_NO_WRITE, // 깊이 테스트(X) + 깊이 기록(X)
+	LESS_NO_WRITE, // 깊이 테스트(O) + 깊이 기록(X)
+
+};
+
+//픽셀 셰이더에 의해 만들어진 결과물이랑 렌더 타겟에 있는 결과물이랑 어떻게 섞을 것인지에 대한 속성
+enum class BLEND_TYPE : uint8
+{
+	DEFAULT,//덮어쓰기
+	ALPHA_BLEND,//알파처리
+	ONE_TO_ONE_BLEND,//1대1
+	END,
 };
 
 //셰이더 정보 Init을 할때 같이 받아준다.
 struct ShaderInfo
 {
+	SHADER_TYPE shaderType = SHADER_TYPE::FORWARD;
 	RASTERIZER_TYPE rasterizerType = RASTERIZER_TYPE::CULL_BACK;
 	DEPTH_STENCIL_TYPE depthStencilType = DEPTH_STENCIL_TYPE::LESS;
+	BLEND_TYPE blendType = BLEND_TYPE::DEFAULT;
+	D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 };
 
 // [일감 기술서] 외주 인력들이 뭘 해야할지 기술
@@ -33,8 +59,10 @@ public:
 	Shader();
 	virtual ~Shader();
 
-	void Init(const wstring& path, ShaderInfo info = ShaderInfo());
+	void Init(const wstring& path, ShaderInfo info = ShaderInfo(), const string& vs = "VS_Main", const string& ps = "PS_Main");
 	void Update();
+
+	SHADER_TYPE GetShaderType() { return _info.shaderType; }
 
 private:
 	void CreateShader(const wstring& path, const string& name, const string& version, ComPtr<ID3DBlob>& blob, D3D12_SHADER_BYTECODE& shaderByteCode);
@@ -42,6 +70,8 @@ private:
 	void CreatePixelShader(const wstring& path, const string& name, const string& version);
 
 private:
+	ShaderInfo _info;
+
 	ComPtr<ID3DBlob>					_vsBlob;
 	ComPtr<ID3DBlob>					_psBlob;
 	ComPtr<ID3DBlob>					_errBlob;

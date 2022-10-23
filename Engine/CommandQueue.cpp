@@ -55,16 +55,20 @@ void CommandQueue::WaitSync()
 
 }
 
+//커맨드큐에서 렌더링을 시작한다.
 void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 {
 	_cmdAlloc->Reset();
 	_cmdList->Reset(_cmdAlloc.Get(), nullptr);
 
-	//스왑체인의 실질적인 부분
+	//버퍼의 인덱스르 받아온 다음네
+	int8 backIndex = _swapChain->GetBackBufferIndex();
+
+	//스왑체인의 실질적인 부분 렌더타겟 그룹에서 받아온다.
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		_swapChain->GetBackRTVBuffer().Get(),
-		D3D12_RESOURCE_STATE_PRESENT,//화면출력
-		D3D12_RESOURCE_STATE_RENDER_TARGET);//외주 결과물
+		GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->GetRTTexture(backIndex)->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_PRESENT, // 화면 출력
+		D3D12_RESOURCE_STATE_RENDER_TARGET); // 외주 결과물
 
 	//루트 시그니쳐를 사용하도록 요기서 해준다.
 	_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
@@ -85,15 +89,15 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 	_cmdList->RSSetScissorRects(1, rect);
 
 	
-	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = _swapChain->GetBackRTV();//백버퍼를 꺼내오고
-	_cmdList->ClearRenderTargetView(backBufferView, Colors::Black, 0, nullptr);//그려달라고 그래픽카드에게 요청한다.
-	
+	//D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = _swapChain->GetBackRTV();//백버퍼를 꺼내오고
+	//_cmdList->ClearRenderTargetView(backBufferView, Colors::Black, 0, nullptr);//그려달라고 그래픽카드에게 요청한다.
+	//
 
-	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = GEngine->GetDepthStencilBuffer()->GetDSVCpuHandle();
+	//D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = GEngine->GetDepthStencilBuffer()->GetDSVCpuHandle();
 
-	_cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
+	//_cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);
 
-	_cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH/*depth 용도로만 사용*//*|D3D12_CLEAR_FLAG_STENCIL*/, 1.0f, 0, 0, nullptr);
+	//_cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH/*depth 용도로만 사용*//*|D3D12_CLEAR_FLAG_STENCIL*/, 1.0f, 0, 0, nullptr);
 	
 
 
@@ -101,8 +105,10 @@ void CommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
 
 void CommandQueue::RenderEnd()
 {
+	int8 backIndex = _swapChain->GetBackBufferIndex();
+
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		_swapChain->GetBackRTVBuffer().Get(),
+		GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->GetRTTexture(backIndex)->GetTex2D().Get(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, // 외주 결과물
 		D3D12_RESOURCE_STATE_PRESENT); // 화면 출력
 

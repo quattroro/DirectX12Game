@@ -29,9 +29,18 @@ public:
 	shared_ptr<Mesh> LoadCubeMesh();
 	shared_ptr<Mesh> LoadSphereMesh();
 
+	//텍스쳐의 해당 함수들을 래핑
+	shared_ptr<Texture> CreateTexture(const wstring& name, DXGI_FORMAT format, uint32 width, uint32 height,
+		const D3D12_HEAP_PROPERTIES& heapProperty, D3D12_HEAP_FLAGS heapFlags,
+		D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE, Vec4 clearColor = Vec4());
+
+	shared_ptr<Texture> CreateTextureFromResource(const wstring& name, ComPtr<ID3D12Resource> tex2D);
+
+
 private:
 	//계속 게임오브젝트를 생성할때마다 셰이더와 마테리얼 등등을 계속 생성할 필요가 없도록 디폴트셰이더를 만들어 준다.
 	void CreateDefaultShader();
+	void CreateDefaultMaterial();
 
 private:
 	using KeyObjMap = std::map<wstring/*key*/, shared_ptr<Object>>;

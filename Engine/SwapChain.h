@@ -32,26 +32,28 @@ public:
 	void SwapIndex();
 
 	ComPtr<IDXGISwapChain> GetSwapChain() { return _swapChain; }
-	ComPtr<ID3D12Resource> GetRenderTarget(int32 index) { return _rtvBuffer[index]; }
+	uint8 GetBackBufferIndex() { return _backBufferIndex; }
+
+	/*ComPtr<ID3D12Resource> GetRenderTarget(int32 index) { return _rtvBuffer[index]; }
 
 	ComPtr<ID3D12Resource> GetBackRTVBuffer() { return _rtvBuffer[_backBufferIndex]; }
-	D3D12_CPU_DESCRIPTOR_HANDLE GetBackRTV() { return _rtvHandle[_backBufferIndex]; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetBackRTV() { return _rtvHandle[_backBufferIndex]; }*/
 
 private:
 	void CreateSwapChain(const WindowInfo& info, ComPtr<IDXGIFactory> dxgi, ComPtr<ID3D12CommandQueue> cmdQueue);
-	void CreateRTV(ComPtr<ID3D12Device> device);
+	//void CreateRTV(ComPtr<ID3D12Device> device);
 
 private:
 	ComPtr<IDXGISwapChain>	_swapChain;
 
-	ComPtr<ID3D12Resource>	_rtvBuffer[SWAP_CHAIN_BUFFER_COUNT];//그릴 대상 (버퍼)
+	//ComPtr<ID3D12Resource>	_rtvBuffer[SWAP_CHAIN_BUFFER_COUNT];//그릴 대상 (버퍼)
 
-	// [기안서]
-	// 외주를 맡길 때 이런 저런 정보들을 같이 넘겨줘야 하는데,
-	// 아무 형태로나 요청하면 못 알아먹는다
-	// - 각종 리소스를 어떤 용도로 사용하는지 꼼꼼하게 적어서 넘겨주는 용도
-	ComPtr<ID3D12DescriptorHeap>	_rtvHeap;
-	D3D12_CPU_DESCRIPTOR_HANDLE		_rtvHandle[SWAP_CHAIN_BUFFER_COUNT];
+	//// [기안서]
+	//// 외주를 맡길 때 이런 저런 정보들을 같이 넘겨줘야 하는데,
+	//// 아무 형태로나 요청하면 못 알아먹는다
+	//// - 각종 리소스를 어떤 용도로 사용하는지 꼼꼼하게 적어서 넘겨주는 용도
+	//ComPtr<ID3D12DescriptorHeap>	_rtvHeap;
+	//D3D12_CPU_DESCRIPTOR_HANDLE		_rtvHandle[SWAP_CHAIN_BUFFER_COUNT];
 
 	uint32					_backBufferIndex = 0;
 };
