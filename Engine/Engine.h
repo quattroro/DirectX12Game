@@ -24,10 +24,15 @@ public:
 public:
 	const WindowInfo& GetWindow() { return _window; }
 	shared_ptr<Device> GetDevice() { return _device; }
-	shared_ptr<CommandQueue> GetCmdQueue() { return _cmdQueue; }
+
+	shared_ptr<GraphicsCommandQueue> GetGraphicsCmdQueue() { return _graphicsCmdQueue; }
+	shared_ptr<ComputeCommandQueue> GetComputeCmdQueue() { return _computeCmdQueue; }
+
 	shared_ptr<SwapChain> GetSwapChain() { return _swapChain; }
 	shared_ptr<RootSignature> GetRootSignature() { return _rootSignature; }
-	shared_ptr<TableDescriptorHeap> GetTableDescHeap() { return _tableDescHeap; }
+
+	shared_ptr<GraphicsDescriptorHeap> GetGraphicsDescHeap() { return _graphicsDescHeap; }
+	shared_ptr<ComputeDescriptorHeap> GetComputeDescHeap() { return _computeDescHeap; }
 	//shared_ptr<DepthStencilBuffer> GetDepthStencilBuffer() { return _depthStencilBuffer; }
 
 	shared_ptr<ConstantBuffer> GetConstantBuffer(CONSTANT_BUFFER_TYPE type) { return _constantBuffers[static_cast<uint8>(type)]; }
@@ -53,10 +58,15 @@ private:
 	D3D12_RECT		_scissorRect = {};
 
 	shared_ptr<Device> _device = make_shared<Device>();
-	shared_ptr<CommandQueue> _cmdQueue = make_shared<CommandQueue>();//일감을 요청할때 해당 클래스를 이용해서 일감을 모아서 한번에 순서대로 실행시켜주는 역할을 한다.
+
+	//일감을 요청할때 해당 클래스를 이용해서 일감을 모아서 한번에 순서대로 실행시켜주는 역할을 한다.
+	shared_ptr<GraphicsCommandQueue> _graphicsCmdQueue = make_shared<GraphicsCommandQueue>();
+	shared_ptr<ComputeCommandQueue> _computeCmdQueue = make_shared<ComputeCommandQueue>();
+
 	shared_ptr<SwapChain> _swapChain = make_shared<SwapChain>();//더블버퍼
 	shared_ptr<RootSignature> _rootSignature = make_shared<RootSignature>();
-	shared_ptr<TableDescriptorHeap> _tableDescHeap = make_shared<TableDescriptorHeap>();
+	shared_ptr<GraphicsDescriptorHeap> _graphicsDescHeap = make_shared<GraphicsDescriptorHeap>();
+	shared_ptr<ComputeDescriptorHeap> _computeDescHeap = make_shared<ComputeDescriptorHeap>();
 
 
 	//shared_ptr<DepthStencilBuffer> _depthStencilBuffer = make_shared<DepthStencilBuffer>();

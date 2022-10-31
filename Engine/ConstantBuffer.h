@@ -22,9 +22,11 @@ public:
 	void Init(CBV_REGISTER reg, uint32 size, uint32 count);
 
 	void Clear();
-	void PushData(void* buffer, uint32 size);
+	void PushGraphicsData(void* buffer, uint32 size);
+	void SetGraphicsGlobalData(void* buffer, uint32 size);//라이트에 사용하는 정보는 따로 사용
 
-	void SetGlobalData(void* buffer, uint32 size);//라이트에 사용하는 정보는 따로 사용
+
+	void PushComputeData(void* buffer, uint32 size);
 
 	D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(uint32 index);
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandle(uint32 index);

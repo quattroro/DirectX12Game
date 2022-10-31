@@ -26,7 +26,10 @@ public:
 	ComPtr<ID3D12DescriptorHeap> GetSRV() { return _srvHeap; }
 	ComPtr<ID3D12DescriptorHeap> GetRTV() { return _rtvHeap; }
 	ComPtr<ID3D12DescriptorHeap> GetDSV() { return _dsvHeap; }
+	ComPtr<ID3D12DescriptorHeap> GetUAV() { return _uavHeap; }
+
 	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVHandle() { return _srvHeapBegin; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetUAVHandle() { return _uavHeapBegin; }
 
 
 private:
@@ -39,9 +42,12 @@ private:
 	//기존 srv하나만 사용하던 것에서 rtv와 dsv도 보관 할 수 있도록 만들어 준다.
 	ComPtr<ID3D12DescriptorHeap>	_rtvHeap;
 	ComPtr<ID3D12DescriptorHeap>	_dsvHeap;
+	ComPtr<ID3D12DescriptorHeap>	_uavHeap;
 
 
 
+private:
 	D3D12_CPU_DESCRIPTOR_HANDLE		_srvHeapBegin = {};
+	D3D12_CPU_DESCRIPTOR_HANDLE		_uavHeapBegin = {};
 };
 

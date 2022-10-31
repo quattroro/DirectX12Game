@@ -25,7 +25,7 @@ void Light::Render()
 	GetTransform()->PushData();//볼륨 메쉬를 이용해 자신의 영역을 표시 하는데 그 메쉬 데이터를 넘겨주는 작업
 
 	_lightMaterial->SetInt(0, _lightIndex);
-	_lightMaterial->PushData();//마테리얼 정보를 넘겨준다.
+	_lightMaterial->PushGraphicsData();//마테리얼 정보를 넘겨준다.
 
 	//라이트 타입에 따라 설정
 	switch (static_cast<LIGHT_TYPE>(_lightInfo.lightType))
