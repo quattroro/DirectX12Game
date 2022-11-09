@@ -12,7 +12,7 @@ public:
 
 
 	void Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexbuffer);
-	void Render();
+	void Render(uint32 instanceCount = 1);//렌더링을 할때 인스턴스 카운트를 받아온다.
 
 	//void SetTransform(const Transform& t) { _transform = t; }
 

@@ -77,9 +77,9 @@ void Mesh::CreateIndexBuffer(const vector<uint32>& buffer)
 	_indexBufferView.SizeInBytes = bufferSize;
 }
 
-void Mesh::Render()
+void Mesh::Render(uint32 instanceCount)
 {
-	GRAPHICS_CMD_LIST->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//GRAPHICS_CMD_LIST->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	GRAPHICS_CMD_LIST->IASetVertexBuffers(0, 1, &_vertexBufferView); // Slot: (0~15)
 	GRAPHICS_CMD_LIST->IASetIndexBuffer(&_indexBufferView);
 
@@ -107,6 +107,6 @@ void Mesh::Render()
 	GEngine->GetCB()->PushData(1, &_transform, sizeof(_transform));*/
 
 	//CMD_LIST->DrawInstanced(_vertexCount, 1, 0, 0);
-	GRAPHICS_CMD_LIST->DrawIndexedInstanced(_indexCount, 1, 0, 0, 0);
+	GRAPHICS_CMD_LIST->DrawIndexedInstanced(_indexCount, instanceCount, 0, 0, 0);
 }
 

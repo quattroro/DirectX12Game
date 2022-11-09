@@ -12,6 +12,7 @@
 
 #include "TestCameraScript.h"
 #include "Resources.h"
+#include "ParticleSystem.h"
 
 //엔진에서 UI를 표시 할때에는 UI만 따로 찍는 카메라가 필요함
 //그런데 이렇게 여러개의 카메라를 쏘기 위해서는 UI인지 아닌지 판별하기위한 장치가 필요한데
@@ -304,6 +305,18 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 		scene->AddGameObject(light);
 	}
 #pragma endregion
+
+#pragma region ParticleSystem
+	{
+		shared_ptr<GameObject> particle = make_shared<GameObject>();
+		particle->AddComponent(make_shared<Transform>());
+		particle->AddComponent(make_shared<ParticleSystem>());
+		particle->SetCheckFrustum(false);
+		particle->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 100.f));
+		scene->AddGameObject(particle);
+	}
+#pragma endregion
+
 
 //#pragma region Point Light
 //	{

@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "Material.h"
 #include "Shader.h"
+#include "ParticleSystem.h"
 
 Matrix Camera::S_MatView;
 Matrix Camera::S_MatProjection;
@@ -81,11 +82,13 @@ void Camera::SortGameObject()
 
 	_vecForward.clear();
 	_vecDeferred.clear();
+	_vecParticle.clear();
 
 	//모든 게임 오브젝트들을 순회하면서 내가 그려줘야 하는 친구 인지 확인한다.
 	for (auto& gameObject : gameObjects)
 	{
-		if (gameObject->GetMeshRenderer() == nullptr)
+		//둘중 하나라고 있으면 그려준다.
+		if (gameObject->GetMeshRenderer() == nullptr && gameObject->GetParticleSystem() == nullptr)
 			continue;
 
 		//컬링이 되어 있는지 체크
@@ -102,16 +105,24 @@ void Camera::SortGameObject()
 			}
 		}
 
-		//그 킨구들의 셰이더 타입을 확인해서 각각 넣어준다.
-		SHADER_TYPE shaderType = gameObject->GetMeshRenderer()->GetMaterial()->GetShader()->GetShaderType();
-		switch (shaderType)
+		
+		if (gameObject->GetMeshRenderer())
 		{
-		case SHADER_TYPE::DEFERRED:
-			_vecDeferred.push_back(gameObject);
-			break;
-		case SHADER_TYPE::FORWARD:
-			_vecForward.push_back(gameObject);
-			break;
+			//그 킨구들의 셰이더 타입을 확인해서 각각 넣어준다.
+			SHADER_TYPE shaderType = gameObject->GetMeshRenderer()->GetMaterial()->GetShader()->GetShaderType();
+			switch (shaderType)
+			{
+			case SHADER_TYPE::DEFERRED:
+				_vecDeferred.push_back(gameObject);
+				break;
+			case SHADER_TYPE::FORWARD:
+				_vecForward.push_back(gameObject);
+				break;
+			}
+		}
+		else
+		{
+			_vecParticle.push_back(gameObject);
 		}
 	}
 }
@@ -135,5 +146,10 @@ void Camera::Render_Forward()
 	for (auto& gameObject : _vecForward)
 	{
 		gameObject->GetMeshRenderer()->Render();
+	}
+
+	for (auto& gameObject : _vecParticle)
+	{
+		gameObject->GetParticleSystem()->Render();
 	}
 }
