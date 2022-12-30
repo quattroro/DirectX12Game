@@ -10,6 +10,15 @@ struct VS_IN
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
+
+    //인스턴싱을 하면서 새롭에 추가된 부분들
+    //params를 통해서 받아오는 것이 아니고 Input으로 직접 넣어준다.
+    //Shsder에서 DESC를 D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA로 설정을 해놓았기 때문에
+    //배열을 넣어주면 알아서 각각 매칭이 된다.
+    row_major matrix matWorld : W;
+    row_major matrix matWV : WV;
+    row_major matrix matWVP : WVP;
+    uint instanceID : SV_InstanceID;
 };
 
 struct VS_OUT
@@ -24,21 +33,50 @@ struct VS_OUT
 };
 
 //정점 셰이더
+//VS_OUT VS_Main(VS_IN input)
+//{
+//    VS_OUT output = (VS_OUT)0;
+//
+//    output.pos = mul(float4(input.pos, 1.f), g_matWVP);
+//    //output.color = input.color;
+//    output.uv = input.uv;
+//
+//    output.viewPos = mul(float4(input.pos, 1.f), g_matWV).xyz;//빛 연산에 쓰기 위해서 프로젝션 단계를 하기 이전의 값을 보내준다.
+//    output.viewNormal = normalize(mul(float4(input.normal, 0.f), g_matWV).xyz);
+//    output.viewTangent = normalize(mul(float4(input.tangent, 0.f), g_matWV).xyz);
+//    output.viewBinormal = normalize(cross(output.viewTangent, output.viewNormal));
+//
+//    return output;
+//}
+
 VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT)0;
 
-    output.pos = mul(float4(input.pos, 1.f), g_matWVP);
-    //output.color = input.color;
-    output.uv = input.uv;
+    if (g_int_0 == 1)//인스턴싱 적용
+    {
+        output.pos = mul(float4(input.pos, 1.f), input.matWVP);
+        output.uv = input.uv;
 
-    output.viewPos = mul(float4(input.pos, 1.f), g_matWV).xyz;//빛 연산에 쓰기 위해서 프로젝션 단계를 하기 이전의 값을 보내준다.
-    output.viewNormal = normalize(mul(float4(input.normal, 0.f), g_matWV).xyz);
-    output.viewTangent = normalize(mul(float4(input.tangent, 0.f), g_matWV).xyz);
-    output.viewBinormal = normalize(cross(output.viewTangent, output.viewNormal));
+        output.viewPos = mul(float4(input.pos, 1.f), input.matWV).xyz;
+        output.viewNormal = normalize(mul(float4(input.normal, 0.f), input.matWV).xyz);
+        output.viewTangent = normalize(mul(float4(input.tangent, 0.f), input.matWV).xyz);
+        output.viewBinormal = normalize(cross(output.viewTangent, output.viewNormal));
+    }
+    else//인스턴싱 미적용
+    {
+        output.pos = mul(float4(input.pos, 1.f), g_matWVP);
+        output.uv = input.uv;
+
+        output.viewPos = mul(float4(input.pos, 1.f), g_matWV).xyz;
+        output.viewNormal = normalize(mul(float4(input.normal, 0.f), g_matWV).xyz);
+        output.viewTangent = normalize(mul(float4(input.tangent, 0.f), g_matWV).xyz);
+        output.viewBinormal = normalize(cross(output.viewTangent, output.viewNormal));
+    }
 
     return output;
 }
+
 
 //디퍼드 방식으로 바꾸면서 마지막 필셀셰이더 이후에 라이팅 작업을 하기 위해서 단계단계를 저장할 필요가 생긴다. 
 //그걸 위한 out구조체
