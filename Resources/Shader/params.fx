@@ -37,6 +37,9 @@ cbuffer TRANSFORM_PARAMS : register(b1)
     row_major matrix g_matWV;
 
     row_major/*행렬 접근순서가 셰이더랑 다렉이랑 다르기 때문에 순서를 맞춰주기 위해서*/  matrix g_matWVP;
+
+    //셰이더에는 역행렬을 구하는 함수가 없기 때문
+    row_major matrix g_matViewInv;
 };
 
 //머테리얼에 정보가 있다.
@@ -67,6 +70,11 @@ cbuffer MATERIAL_PARAMS : register(b2)
     float4  g_vec4_1;
     float4  g_vec4_2;
     float4  g_vec4_3;
+
+    row_major float4x4 g_mat_0;
+    row_major float4x4 g_mat_1;
+    row_major float4x4 g_mat_2;
+    row_major float4x4 g_mat_3;
 };
 
 //메테리얼의 텍스쳐

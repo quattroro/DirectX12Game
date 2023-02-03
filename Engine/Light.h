@@ -41,11 +41,14 @@ public:
 
 	virtual void FinalUpdate() override;
 	void Render();
+	void RenderShadow();
 
 public:
+	LIGHT_TYPE GetLightType() { return static_cast<LIGHT_TYPE>(_lightInfo.lightType); }
+
 	const LightInfo& GetLightInfo() { return _lightInfo; }
 
-	void SetLightDirection(const Vec3& direction) { _lightInfo.direction = direction; }
+	void SetLightDirection(Vec3 direction);
 
 	void SetDiffuse(const Vec3& diffuse) { _lightInfo.color.diffuse = diffuse; }
 	void SetAmbient(const Vec3& ambient) { _lightInfo.color.ambient = ambient; }
@@ -65,5 +68,7 @@ private:
 	int8 _lightIndex = -1;//자신이 몇번째인지
 	shared_ptr<class Mesh> _volumeMesh;//내가 차지하는 영역을 알기 위한메쉬
 	shared_ptr<class Material> _lightMaterial; //셰이더에 넘겨줄 정보
+
+	shared_ptr<GameObject> _shadowCamera;//Shadow Map을 만들기 위한 카메라를 Light자체가 가지고 있는다.
 };
 

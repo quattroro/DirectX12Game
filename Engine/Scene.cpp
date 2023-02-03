@@ -46,23 +46,39 @@ void Scene::FinalUpdate()
 	}
 }
 
-void Scene::Render()
-{
-	//조명에 대한 정보들을 여기서 만들어 준다.
-	PushLightData();
 
+void Scene::ClearRTV()
+{
 	//커매드 큐의 렌더 비긴에 있던 것이 여기로 왔다.
 	// SwapChain Group 초기화
 	int8 backIndex = GEngine->GetSwapChain()->GetBackBufferIndex();
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->ClearRenderTargetView(backIndex);
-
+	// Shadow Group 초기화
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->ClearRenderTargetView();
 	// Deferred Group 초기화
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->ClearRenderTargetView();
-
 	// Lighting Group 초기화
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->ClearRenderTargetView();
+}
 
-	// Deferred OMSet 
+void Scene::RenderShadow()
+{
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->OMSetRenderTargets();
+
+	for (auto& light : _lights)
+	{
+		if (light->GetLightType() != LIGHT_TYPE::DIRECTIONAL_LIGHT)
+			continue;
+
+		light->RenderShadow();
+	}
+
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->WaitTargetToResource();
+}
+
+void Scene::RenderDeferred()
+{
+	// Deferred OMSet
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->OMSetRenderTargets();
 
 	//가장 처음 만들어진 카메라를 메인 카메라로 한다.
@@ -70,28 +86,50 @@ void Scene::Render()
 	mainCamera->SortGameObject();
 	mainCamera->Render_Deferred();
 
-
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->WaitTargetToResource();//타겟에서 리소스로
+}
+
+
+void Scene::Render()
+{
+	//조명에 대한 정보들을 여기서 만들어 준다.
+	PushLightData();
+
+	ClearRTV();
+
+	RenderShadow();
+
+	RenderDeferred();
+	
+
+	////가장 처음 만들어진 카메라를 메인 카메라로 한다.
+	//shared_ptr<Camera> mainCamera = _cameras[0];
+	//mainCamera->SortGameObject();
+	//mainCamera->Render_Deferred();
+
+
+	//GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->WaitTargetToResource();//타겟에서 리소스로
 	RenderLights();
 
-	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->WaitTargetToResource();//타겟에서 리소스로
+	//GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->WaitTargetToResource();//타겟에서 리소스로
 	RenderFinal();
 
+	RenderForward();
 
-	mainCamera->Render_Forward();
+	//mainCamera->Render_Forward();
 
 
-	//일부는 디퍼드, 일부는 포워드로 그려야 하는는데 
-	//그러기 위해서 미리 카메라 쪽에서 정렬을 시켜서 따로따로 렌더를 한다. 
-	for (auto& camera : _cameras)
-	{
-		//메인 카메라를 제외한 나머지 카메라들은 소팅을 하고 포워드 렌더만 한다.
-		if (camera == mainCamera)
-			continue;
+	////일부는 디퍼드, 일부는 포워드로 그려야 하는는데 
+	////그러기 위해서 미리 카메라 쪽에서 정렬을 시켜서 따로따로 렌더를 한다. 
+	//for (auto& camera : _cameras)
+	//{
+	//	//메인 카메라를 제외한 나머지 카메라들은 소팅을 하고 포워드 렌더만 한다.
+	//	if (camera == mainCamera)
+	//		continue;
 
-		camera->SortGameObject();
-		camera->Render_Forward();
-	}
+	//	camera->SortGameObject();
+	//	camera->Render_Forward();
+	//}
 
 
 
@@ -116,9 +154,28 @@ void Scene::Render()
 	//}
 }
 
+void Scene::RenderForward()
+{
+	shared_ptr<Camera> mainCamera = _cameras[0];
+	mainCamera->Render_Forward();
+
+	for (auto& camera : _cameras)
+	{
+		if (camera == mainCamera)
+			continue;
+
+		camera->SortGameObject();
+		camera->Render_Forward();
+	}
+}
+
 //광원을 하나씩 그린다.
 void Scene::RenderLights()
 {
+	shared_ptr<Camera> mainCamera = _cameras[0];
+	Camera::S_MatView = mainCamera->GetViewMatrix();
+	Camera::S_MatProjection = mainCamera->GetProjectionMatrix();
+
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->OMSetRenderTargets();
 
 	// 광원을 그린다.
@@ -126,6 +183,8 @@ void Scene::RenderLights()
 	{
 		light->Render();
 	}
+
+	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->WaitTargetToResource();
 }
 
 void Scene::RenderFinal()

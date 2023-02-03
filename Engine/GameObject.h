@@ -38,6 +38,9 @@ public:
 	void SetLayerIndex(uint8 layer) { _layerIndex = layer; }
 	uint8 GetLayerIndex() { return _layerIndex; }
 
+	void SetStatic(bool flag) { _static = flag; }
+	bool IsStatic() { return _static; }
+
 private:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> _components;
 	vector<shared_ptr<MonoBehaviour>> _scripts;
@@ -46,5 +49,6 @@ private:
 
 	//자기 자신의 layer, 모든 레이어는 씬 매니저 에서 관리한다
 	uint8 _layerIndex = 0;
+	bool _static = true;
 };
 

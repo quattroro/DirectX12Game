@@ -60,7 +60,7 @@ void GraphicsCommandQueue::WaitSync()
 }
 
 //커맨드큐에서 렌더링을 시작한다.
-void GraphicsCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
+void GraphicsCommandQueue::RenderBegin(/*const D3D12_VIEWPORT* vp, const D3D12_RECT* rect*/)
 {
 	_cmdAlloc->Reset();
 	_cmdList->Reset(_cmdAlloc.Get(), nullptr);
@@ -89,8 +89,9 @@ void GraphicsCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_REC
 
 	_cmdList->ResourceBarrier(1, &barrier);
 
-	_cmdList->RSSetViewports(1, vp);
-	_cmdList->RSSetScissorRects(1, rect);
+	//이 부분은 없어도 된다. 렌더그룹에서 대신해주기 때문에 
+	/*_cmdList->RSSetViewports(1, vp);
+	_cmdList->RSSetScissorRects(1, rect);*/
 
 	
 	//D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = _swapChain->GetBackRTV();//백버퍼를 꺼내오고

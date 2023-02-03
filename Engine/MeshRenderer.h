@@ -29,7 +29,10 @@ public:
 
 	//인스턴싱 이전의 방식
 	void Render();
+	//인스턴싱 이후의 방식
 	void Render(shared_ptr<class InstancingBuffer>& buffer);
+	//그림자를 그려주는 렌더
+	void RenderShadow();
 
 	uint64 GetInstanceID();
 
