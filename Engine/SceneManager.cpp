@@ -13,6 +13,7 @@
 #include "TestCameraScript.h"
 #include "Resources.h"
 #include "ParticleSystem.h"
+#include "Terrain.h"	
 
 //엔진에서 UI를 표시 할때에는 UI만 따로 찍는 카메라가 필요함
 //그런데 이렇게 여러개의 카메라를 쏘기 위해서는 UI인지 아닌지 판별하기위한 장치가 필요한데
@@ -173,6 +174,7 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 		camera->AddComponent(make_shared<Transform>());
 		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45도
 		camera->AddComponent(make_shared<TestCameraScript>());
+		camera->GetCamera()->SetFar(10000.f);
 		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
 
 		//1번 카메라는 UI는 찍지 않는다
@@ -284,25 +286,59 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 	}*/
 #pragma endregion
 
-#pragma region Plane
+//#pragma region Plane
+//	{
+//		shared_ptr<GameObject> obj = make_shared<GameObject>();
+//		obj->AddComponent(make_shared<Transform>());
+//		obj->GetTransform()->SetLocalScale(Vec3(1000.f, 1.f, 1000.f));
+//		obj->GetTransform()->SetLocalPosition(Vec3(0.f, -100.f, 500.f));
+//		obj->SetStatic(true);
+//		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+//		{
+//			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCubeMesh();
+//			meshRenderer->SetMesh(mesh);
+//		}
+//		{
+//			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"GameObject")->Clone();
+//			material->SetInt(0, 0);
+//			meshRenderer->SetMaterial(material);
+//		}
+//		obj->AddComponent(meshRenderer);
+//		scene->AddGameObject(obj);
+//	}
+//#pragma endregion
+
+
+#pragma region Terrain
 	{
 		shared_ptr<GameObject> obj = make_shared<GameObject>();
 		obj->AddComponent(make_shared<Transform>());
-		obj->GetTransform()->SetLocalScale(Vec3(1000.f, 1.f, 1000.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(0.f, -100.f, 500.f));
+		obj->AddComponent(make_shared<Terrain>());
+		obj->AddComponent(make_shared<MeshRenderer>());
+
+		obj->GetTransform()->SetLocalScale(Vec3(50.f, 250.f, 50.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(-100.f, -200.f, 300.f));
+		obj->SetStatic(true);
+		obj->GetTerrain()->Init(64, 64);
+		obj->SetCheckFrustum(false);
+
+		scene->AddGameObject(obj);
+
+		/*obj->GetTransform()->SetLocalScale(Vec3(50.f, 200.f, 50.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(-100.f, -200.f, 300.f));
 		obj->SetStatic(true);
 		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
 		{
-			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCubeMesh();
+			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadTerrainMesh();
 			meshRenderer->SetMesh(mesh);
 		}
 		{
-			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"GameObject")->Clone();
+			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"Terrain");
 			material->SetInt(0, 0);
 			meshRenderer->SetMaterial(material);
 		}
 		obj->AddComponent(meshRenderer);
-		scene->AddGameObject(obj);
+		scene->AddGameObject(obj);*/
 	}
 #pragma endregion
 
@@ -348,7 +384,7 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 		light->AddComponent(make_shared<Transform>());
 		light->GetTransform()->SetLocalPosition(Vec3(0, 1000, 500));
 		light->AddComponent(make_shared<Light>());
-		light->GetLight()->SetLightDirection(Vec3(0, -1, 0.f));
+		light->GetLight()->SetLightDirection(Vec3(0, -1, 1.f));
 		light->GetLight()->SetLightType(LIGHT_TYPE::DIRECTIONAL_LIGHT);
 		light->GetLight()->SetDiffuse(Vec3(1.f, 1.f, 1.f));
 		light->GetLight()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
@@ -358,25 +394,25 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 	}
 #pragma endregion
 
-#pragma region Tessellation Test
-	{
-		shared_ptr<GameObject> gameObject = make_shared<GameObject>();
-		gameObject->AddComponent(make_shared<Transform>());
-		gameObject->GetTransform()->SetLocalPosition(Vec3(0, 0, 300));
-		gameObject->GetTransform()->SetLocalScale(Vec3(100, 100, 100));
-		gameObject->GetTransform()->SetLocalRotation(Vec3(0, 0, 0));
-
-		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-		{
-			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-			meshRenderer->SetMesh(mesh);
-			meshRenderer->SetMaterial(GET_SINGLE(Resources)->Get<Material>(L"Tessellation"));
-		}
-		gameObject->AddComponent(meshRenderer);
-
-		scene->AddGameObject(gameObject);
-	}
-#pragma endregion
+//#pragma region Tessellation Test
+//	{
+//		shared_ptr<GameObject> gameObject = make_shared<GameObject>();
+//		gameObject->AddComponent(make_shared<Transform>());
+//		gameObject->GetTransform()->SetLocalPosition(Vec3(0, 0, 300));
+//		gameObject->GetTransform()->SetLocalScale(Vec3(100, 100, 100));
+//		gameObject->GetTransform()->SetLocalRotation(Vec3(0, 0, 0));
+//
+//		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+//		{
+//			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+//			meshRenderer->SetMesh(mesh);
+//			meshRenderer->SetMaterial(GET_SINGLE(Resources)->Get<Material>(L"Tessellation"));
+//		}
+//		gameObject->AddComponent(meshRenderer);
+//
+//		scene->AddGameObject(gameObject);
+//	}
+//#pragma endregion
 
 //#pragma region ParticleSystem
 //	{

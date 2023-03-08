@@ -29,6 +29,8 @@ public:
 	shared_ptr<Mesh> LoadRectangleMesh();
 	shared_ptr<Mesh> LoadCubeMesh();
 	shared_ptr<Mesh> LoadSphereMesh();
+	shared_ptr<Mesh> LoadTerrainMesh(int32 sizeX = 15, int32 sizeZ = 15);//x좌표로 몇개, y좌표로 몇개 인지
+
 
 	//텍스쳐의 해당 함수들을 래핑
 	shared_ptr<Texture> CreateTexture(const wstring& name, DXGI_FORMAT format, uint32 width, uint32 height,

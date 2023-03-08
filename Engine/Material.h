@@ -3,19 +3,34 @@
 class Shader;
 class Texture;
 
+//enum
+//{
+//	MATERIAL_INT_COUNT = 4,
+//	MATERIAL_FLOAT_COUNT = 4,
+//	MATERIAL_TEXTURE_COUNT = 4,
+//	MATERIAL_VECTOR2_COUNT = 4,
+//	MATERIAL_VECTOR4_COUNT = 4,
+//	MATERIAL_MATRIX_COUNT = 4
+//
+//};
+
 enum
 {
-	MATERIAL_INT_COUNT = 4,
-	MATERIAL_FLOAT_COUNT = 4,
-	MATERIAL_TEXTURE_COUNT = 4,
-	MATERIAL_VECTOR2_COUNT = 4,
-	MATERIAL_VECTOR4_COUNT = 4,
-	MATERIAL_MATRIX_COUNT = 4
-
+	MATERIAL_ARG_COUNT = 4,
 };
 
 struct MaterialParams//여기의 인자들은 셰이더코드에서 형식을 맞춰준다.
 {
+	MaterialParams()
+	{
+		for (int32 i = 0; i < MATERIAL_ARG_COUNT; i++)
+		{
+			SetInt(i, 0);
+			SetFloat(i, 0.f);
+			SetTexOn(i, 0);
+		}
+	}
+
 	void SetInt(uint8 index, int32 value) { intParams[index] = value; }
 	void SetFloat(uint8 index, float value) { floatParams[index] = value; }
 	void SetTexOn(uint8 index, int32 value) { texOnParams[index] = value; }
@@ -23,12 +38,12 @@ struct MaterialParams//여기의 인자들은 셰이더코드에서 형식을 맞춰준다.
 	void SetVec4(uint8 index, Vec4 value) { vec4Params[index] = value; }
 	void SetMatrix(uint8 index, Matrix& value) { matrixParams[index] = value; }
 
-	array<int32, MATERIAL_INT_COUNT> intParams;
-	array<float, MATERIAL_FLOAT_COUNT> floatParams;
-	array<int32, MATERIAL_TEXTURE_COUNT> texOnParams;
-	array<Vec2, MATERIAL_VECTOR2_COUNT> vec2Params;
-	array<Vec4, MATERIAL_VECTOR4_COUNT> vec4Params;
-	array<Matrix, MATERIAL_MATRIX_COUNT> matrixParams;
+	array<int32, MATERIAL_ARG_COUNT> intParams;
+	array<float, MATERIAL_ARG_COUNT> floatParams;
+	array<int32, MATERIAL_ARG_COUNT> texOnParams;
+	array<Vec2, MATERIAL_ARG_COUNT> vec2Params;
+	array<Vec4, MATERIAL_ARG_COUNT> vec4Params;
+	array<Matrix, MATERIAL_ARG_COUNT> matrixParams;
 
 };
 
@@ -62,6 +77,6 @@ public:
 private:
 	shared_ptr<Shader>	_shader;
 	MaterialParams		_params;
-	array<shared_ptr<Texture>, MATERIAL_TEXTURE_COUNT> _textures;
+	array<shared_ptr<Texture>, MATERIAL_ARG_COUNT> _textures;
 };
 
